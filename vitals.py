@@ -17,9 +17,7 @@ def initialize_analyticsreporting():
   credentials = ServiceAccountCredentials.from_json_keyfile_name(
     KEY_FILE_LOCATION, SCOPES)
 
-  analytics = build('analyticsreporting', 'v4', credentials=credentials)
-
-  return analytics
+  return build('analyticsreporting', 'v4', credentials=credentials)
 
 # Adjust the query details; comment out segments if not needed
 def fetch_data(metric, start_date = START_DATE, end_date = END_DATE):
@@ -106,13 +104,9 @@ def get_good_avg_poor(metric):
 
 # Returns percentile value for the time range
 def get_percentile(metric, percentile):
-  vals = []
-
   result = fetch_data(metric)
 
-  for row in result:
-    vals.append(int(row.get('metrics')[0].get('values')[0]))
-
+  vals = [int(row.get('metrics')[0].get('values')[0]) for row in result]
   a = np.array(vals)
 
   p = np.percentile(a, percentile)
@@ -130,13 +124,10 @@ def get_percentile_timeseries(metric, percentile):
   delta = timedelta(days=1)
 
   while start_date <= end_date:
-    vals = []
     print (start_date.strftime('%Y-%m-%d'))
     result = fetch_data(metric, start_date.strftime('%Y-%m-%d'), start_date.strftime('%Y-%m-%d'))
 
-    for row in result:
-      vals.append(int(row.get('metrics')[0].get('values')[0]))
-
+    vals = [int(row.get('metrics')[0].get('values')[0]) for row in result]
     a = np.array(vals)
 
     p = np.percentile(a, percentile)
